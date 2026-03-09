@@ -15,3 +15,4 @@ jobs:
         with:
           setup_python: "true"
           python_version: "3.14"
+          requirements_file: "requirements.yml"
