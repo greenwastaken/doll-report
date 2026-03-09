@@ -1,0 +1,39 @@
+---
+name: Run dashboard deployment
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "dashboards/**"
+    types: [closed]
+
+jobs:
+  deploy:
+    name: Run ansible
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          echo "${{ secrets.SSH_PRIV_KEY }}" > ansible_key
+          chmod 600 ansible_key
+
+      - name: Setup venv and install ansible
+        shell: bash
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Run Ansible Playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
+
+        run: |
+          ansible-playbook -u ${{ secrets.ANSIBLE_USER }} -i doll.report, main.yaml

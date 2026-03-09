@@ -4,18 +4,15 @@
     path: /opt/gatus_config
     state: directory
 
+- name: ensure gatus data dir
+  ansible.builtin.file:
+    path: /opt/gatus_data
+    state: directory
+
 - name: ensure doll report config dir
   ansible.builtin.file:
     path: /opt/doll.report.nginx.conf.d
     state: directory
-
-
-- name: debug loop
-  debug:
-    msg: "{{ dashboard }}"
-  loop: "{{ dashboards | dict2items }}"
-  loop_control:
-    loop_var: dashboard
 
 - name: instance config files
   ansible.builtin.template:
@@ -29,7 +26,7 @@
   community.docker.docker_network:
     name: doll-report
 
-- name: ensure tenant dashboard gatus containers
+- name: ensure tenant dashboard gatus container
   community.docker.docker_container:
     name: "gatus-{{ dashboard.key }}"
     image: ghcr.io/twin/gatus:stable
@@ -37,8 +34,10 @@
     network_mode: "doll-report"
     restart_policy: "unless-stopped"
     recreate: false
+    restart:  true
     volumes:
       - "/opt/gatus_config/{{ dashboard.key }}.yaml:/config/config.yaml"
+      - "/opt/gatus_data/{{ dashboard.key }}/:/status_history/"
   loop: "{{ dashboards | dict2items }}"
   loop_control:
     loop_var: dashboard
