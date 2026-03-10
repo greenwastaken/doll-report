@@ -13,7 +13,7 @@ When pushing to the repo [`yamllint`](https://github.com/adrienverge/yamllint) w
 make sure your branch passes this or the merge request will not be approved. the `yamllint` package is available on PyPi
 
 
-## `<dashbaord_name>.yaml` definitions
+## `<dashboard_name>.yaml` definitions
 The `<dashboard_name>.yaml` files contain [gatus](https://github.com/TwiN/gatus) configuration.
 
 The filename (excluding `.yaml`) will be used as the subdomain for the dashboard,
