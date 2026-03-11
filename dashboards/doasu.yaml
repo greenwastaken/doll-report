@@ -1,0 +1,112 @@
+ui:
+  # HTML DOCUMENT
+  title: "doasu.dev uptime"  # <title/> tag 
+  description: ":3"
+  favicon:  # favico
+    default: "https://www.doasu.dev/favicon.ico"
+    size16x16: "https://www.doasu.dev/favicon.ico"
+    size32x32: "https://www.doasu.dev/favicon.ico"
+
+  # HEADER
+  logo: "https://www.doasu.dev/favicon.ico"  # web ui main logo
+  header: "up.doasu.dev"  # dashboard <h1>
+  link: "https://up.doasu.dev"
+  buttons:
+    - name: "report incident"
+      link: "mailto:webmaster@doasu.dev"
+
+  # DASHBOARD
+  dashboard-heading: "% ping doasu.dev."  # dashboard <h2>
+  dashboard-subheading: "PING doasu.dev (2.1.3.7) 56(84) bytes of data."  # dashboard <h2>
+  default-sort-by: group
+  custom-css: |2  # dashboard custom css
+    body {
+      font-family: monospace;
+    }
+    .text-green-600 { color: rgb(119 170 153/var(--tw-text-opacity)) !important }
+
+  dark-mode: false # don't use dark mode by default
+
+storage:
+  type: sqlite
+  caching: true
+  path: /status_history/history.db
+
+announcements:
+  - timestamp: "1970-01-01T01:00:00Z"
+    type: operational
+    message: "⚠️ :3 ⚠️"
+  - timestamp: "1970-01-01T00:00:00Z"
+    type: information
+    message: "mailto webmaster@doasu.dev if it no work"
+
+endpoints:
+    ############
+    # EXTERNAL #
+    ############
+  - name: webbed site
+    url: https://www.doasu.dev
+    conditions:
+      - "[STATUS] == 200"
+    group: external
+
+  - name: www-apps/snac
+    url: https://doasu.dev/pub/api/v1/instance
+    conditions:
+      - "[STATUS] == 200"
+    group: external
+
+  - name: matrices
+    url: https://chat.doasu.dev
+    conditions:
+      - "[STATUS] == 200"
+    group: external
+  
+    ############
+    # INTERNAL #
+    ############
+  - name: net-p2p/syncthing
+    url: https://sync.doasu.dev/rest/noauth/health
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    group: internal
+
+  - name: media-sound/navidrome
+    url: https://listen.doasu.dev/ping
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == ."
+    group: internal
+
+      
+    #######################
+    # WWW-APPS/CODELIRIUM #
+    #######################
+  - name: codelirium
+    url: https://code.doasu.dev/api/healthz
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == pass"
+    group: www-apps/codelirium
+
+  - name: codelirium[cache]
+    url: https://code.doasu.dev/api/healthz
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].checks.cache:ping[0].status == pass"
+    group: www-apps/codelirium
+
+  - name: codelirium[database]
+    url: https://code.doasu.dev/api/healthz
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].checks.database:ping[0].status == pass"
+    group: www-apps/codelirium
+
+  - name: codelirium[ssh]
+    url: "ssh://code.doasu.dev:2222"
+    conditions:
+      - "[STATUS] == 0"
+      - "[CONNECTED] == true"
+    group: www-apps/codelirium
