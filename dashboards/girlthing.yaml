@@ -1,3 +1,13 @@
+alerting:
+  discord:
+    webhook-url: ${DISCORD_WEBHOOK_URL}
+    title: ":ribbon: girlthing.doll.report"
+    default-alert:
+      description: "health check failed"
+      send-on-resolved: true
+      failure-threshold: 5
+      success-threshold: 5
+
 ui:  # web-ui configuration, feel free to change it !!
   title: "girlthi.ng status"  # <title/> tag
   header: "girlthing.doll.report"  # dashboard <h1>
@@ -26,6 +36,9 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"  # Optional group
+    alerts:
+      - type: discord
+
 
   - name: ircd
     url: tls://irc.girlthi.ng:6697
@@ -34,6 +47,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[CONNECTED] == true"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: mumble
     url: udp://miserable.girlthi.ng:64738
@@ -41,6 +56,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
     conditions:
       - "[CONNECTED] == true"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: desktop.girtlhi.ng
     url: https://desktop.girlthi.ng
@@ -49,6 +66,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: znc web ui
     url: https://znc.girlthi.ng:1337
@@ -57,6 +76,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: znc irc
     url: tls://znc.girlthi.ng:6697
@@ -65,6 +86,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[CONNECTED] == true"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: bsky pds
     url: https://bsky.doll.rehab/
@@ -73,6 +96,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: pathetic.systems iceshrimp.net
     url: https://pathetic.systems
@@ -81,6 +106,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: tuwunel
     url: https://matrix.garlic.social/
@@ -89,6 +116,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: ~/tilde pages
     url: https://girlthi.ng
@@ -97,6 +126,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: doll.report tenants
     url: https://girlthing.doll.report
@@ -105,6 +136,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
+    alerts:
+      - type: discord
 
   - name: desolate.girlthi.ng
     url: icmp://desolate.girlthi.ng
@@ -112,6 +145,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
     conditions:
       - "[CONNECTED] == true"
     group: "infrastructure"
+    alerts:
+      - type: discord
 
   - name: solitary.girlthi.ng
     url: icmp://solitary.girlthi.ng
@@ -119,6 +154,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
     conditions:
       - "[CONNECTED] == true"
     group: "infrastructure"
+    alerts:
+      - type: discord
 
   - name: windswept.girlthi.ng
     url: icmp://windswept.girlthi.ng
@@ -126,6 +163,8 @@ endpoints:  # endpoints to probe. check gatus README.md for options
     conditions:
       - "[CONNECTED] == true"
     group: "infrastructure"
+    alerts:
+      - type: discord
 
   - name: miserable.girlthi.ng
     url: icmp://miserable.girlthi.ng
@@ -133,3 +172,5 @@ endpoints:  # endpoints to probe. check gatus README.md for options
     conditions:
       - "[CONNECTED] == true"
     group: "infrastructure"
+    alerts:
+      - type: discord
