@@ -2,6 +2,7 @@ ui:
   title: "4censord status"
   header: "4censord.doll.report"
   dashboard-subheading: "Services hosted by (or important to) 4censord"
+  default-sort-by: group
   # TODO icons
   # logo: "https://static-cdn.jtvnw.net/jtv_user_pictures/a78a5941-2248-4014-9519-00e52d65348b-profile_image-70x70.png"
   # favicon:
@@ -9,23 +10,40 @@ ui:
   #   size16x16: "https://static-cdn.jtvnw.net/jtv_user_pictures/a78a5941-2248-4014-9519-00e52d65348b-profile_image-70x70.png"
   #   size32x32: "https://static-cdn.jtvnw.net/jtv_user_pictures/a78a5941-2248-4014-9519-00e52d65348b-profile_image-70x70.png"
 
+alerting:
+  email:
+    from: "monitoring@doll.report"
+    username: ${DOLL_REPORT_SMTP_USERNAME}
+    password: ${DOLL_REPORT_SMTP_PASSWORD}
+    host: ${DOLL_REPORT_SMTP_PASSWORD}
+    port: 587
+    to: ${4CENSORD_ALERTING_EMAIL}
+    failure-threshold: 10
 
 # Shamelessly copied from 41666s' configuration
 _variables:
   - &interval 60s
-  - &http_condition
+  - &http_condition_100
     - "[STATUS] == 200"
     - "[CERTIFICATE_EXPIRATION] > 48h"
     - "[RESPONSE_TIME] < 100"
-  - &tls_condition
-    - "[CONNECTED] == true"
+  - &http_condition_250
+    - "[STATUS] == 200"
     - "[CERTIFICATE_EXPIRATION] > 48h"
+    - "[RESPONSE_TIME] < 250"
   - &ping_condition
     - "[CONNECTED] == true"
   - &domain_check
     - "[DOMAIN_EXPIRATION] > 720h"
   - &interval_domaincheck 720h
-
+  - &alert
+    - type: email
+      description: "healthcheck failed"
+      send-on-resolved: true
+  - &alert_domain_expiration
+    - type: email
+      description: "Domain is about to expire"
+      failure-threshold: 1
 # leave as is
 storage:
   type: sqlite
@@ -41,24 +59,64 @@ endpoints:
   - name: unfug.social - Media CDN
     url: https://media.unfug.social/public/site_uploads/files/000/000/001/@1x/9ef47b613f49f1ae.png
     interval: *interval
-    conditions: *http_condition
+    conditions: *http_condition_250
     group: unfug-social
 
-  - name: gateway.4censord.cloud
-    url: https://gateway.4censord.cloud
+  #
+  # Group "hosts"
+  # contains machines, be they bare-metal or vps somewhere
+  #
+  - name: gateway.4censord.cloud - ipv6
+    url: icmp://gateway.4censord.cloud
     interval: *interval
-    conditions: *http_condition
+    conditions: *ping_condition
     group: hosts
+    client:
+      network: ipv6
+  - name: gateway.4censord.cloud - ipv4
+    url: icmp://gateway.4censord.cloud
+    interval: *interval
+    conditions: *ping_condition
+    group: hosts
+    client:
+      network: ipv4
+
+  - name: unfug.social - ipv6
+    url: icmp://unfug.social
+    interval: *interval
+    conditions: *ping_condition
+    group: hosts
+    client:
+      network: ipv6
+  - name: unfug.social - ipv4
+    url: icmp://unfug.social
+    interval: *interval
+    conditions: *ping_condition
+    group: hosts
+    client:
+      network: ipv4
 
 
+  #
+  # Group "domains"
+  # checks expiration timer of domains
+  # this only runs once a month (every 720h)
+  #
   - name: 4censord.cloud
     url: icmp://4censord.cloud
     interval: *interval_domaincheck
     conditions: *domain_check
     group: domains
-
+    alerts: *alert_domain_expiration
+  - name: 4censord.de
+    url: icmp://4censord.de
+    interval: *interval_domaincheck
+    conditions: *domain_check
+    group: domains
+    alerts: *alert_domain_expiration
   - name: unfug.social
     url: icmp://unfug.social
     interval: *interval_domaincheck
     conditions: *domain_check
     group: domains
+    alerts: *alert_domain_expiration
