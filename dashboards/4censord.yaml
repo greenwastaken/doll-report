@@ -1,0 +1,64 @@
+ui:
+  title: "4censord status"
+  header: "4censord.doll.report"
+  dashboard-subheading: "Services hosted by (or important to) 4censord"
+  # TODO icons
+  # logo: "https://static-cdn.jtvnw.net/jtv_user_pictures/a78a5941-2248-4014-9519-00e52d65348b-profile_image-70x70.png"
+  # favicon:
+  #   default: "https://static-cdn.jtvnw.net/jtv_user_pictures/a78a5941-2248-4014-9519-00e52d65348b-profile_image-70x70.png"
+  #   size16x16: "https://static-cdn.jtvnw.net/jtv_user_pictures/a78a5941-2248-4014-9519-00e52d65348b-profile_image-70x70.png"
+  #   size32x32: "https://static-cdn.jtvnw.net/jtv_user_pictures/a78a5941-2248-4014-9519-00e52d65348b-profile_image-70x70.png"
+
+
+# Shamelessly copied from 41666s' configuration
+_variables:
+  - &interval 60s
+  - &http_condition
+    - "[STATUS] == 200"
+    - "[CERTIFICATE_EXPIRATION] > 48h"
+    - "[RESPONSE_TIME] < 100"
+  - &tls_condition
+    - "[CONNECTED] == true"
+    - "[CERTIFICATE_EXPIRATION] > 48h"
+  - &ping_condition
+    - "[CONNECTED] == true"
+  - &domain_check
+    - "[DOMAIN_EXPIRATION] > 720h"
+  - &interval_domaincheck 3d
+
+# leave as is
+storage:
+  type: sqlite
+  caching: true
+  path: /status_history/history.db
+
+endpoints:
+  - name: unfug.social - Instance
+    url: https://unfug.social/health
+    interval: *interval
+    conditions: *http_condition
+    group: unfug-social
+  - name: unfug.social - Media CDN
+    url: https://media.unfug.social/public/site_uploads/files/000/000/001/@1x/9ef47b613f49f1ae.png
+    interval: *interval
+    conditions: *http_condition
+    group: unfug-social
+
+  - name: gateway.4censord.cloud
+    url: https://gateway.4censord.cloud
+    interval: *interval
+    conditions: *http_condition
+    group: hosts
+
+
+  - name: 4censord.cloud
+    url: 4censord.cloud
+    interval: *interval_domaincheck
+    conditions: *domain_check
+    group: domains
+
+  - name: unfug.social
+    url: unfug.social
+    interval: *interval_domaincheck
+    conditions: *domain_check
+    group: domains
