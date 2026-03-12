@@ -1,7 +1,10 @@
 _variables:
   - &interval 60s
+  - &alert
+      - type: discord
   - &endpoint_default
     interval: *interval
+    alerts: *alert
   - &condition_http
     - "[STATUS] == 200"
     - "[RESPONSE_TIME] < 300"
@@ -12,6 +15,16 @@ _variables:
   - &condition_ping
     - "[CONNECTED] == true"
 
+alerting:
+  discord:
+    webhook-url: ${DISCORD_WEBHOOK_URL}
+    title: "m.doll.report :fox:"
+    message-content: "@everyone"
+    default-alert:
+      description: "health check failed"
+      send-on-resolved: true
+      failure-threshold: 3
+      success-threshold: 5
 
 ui:
   title: "m status"
