@@ -1,0 +1,217 @@
+alerting:
+  discord:
+    webhook-url: ${DISCORD_WEBHOOK_URL}
+    title: ":cake: maecafe status"
+    default-alert:
+      description: "health check failed"
+      send-on-resolved: true
+      failure-threshold: 5
+      success-threshold: 5
+
+ui:  # web-ui configuration, feel free to change it !!
+  title: "maecafe status"  # <title/> tag
+  header: "maecafe"  # dashboard <h1>
+  dashboard-subheading: "Service Status"  # dashboard <h2>
+  logo: "cdn.mae.wtf/maespacestation/logo.png"  # web ui main logo
+  favicon:  # favico
+    default: "https://cdn.mae.wtf/maespacestation/logo.png"
+    size16x16: "https://cdn.mae.wtf/maespacestation/logo.png"
+    size32x32: "https://cdn.mae.wtf/maespacestation/logo.png"
+  default-sort-by: group
+  custom-css: |2  # dashboard custom css
+    @import url(https://rsms.me/inter/inter.css);
+    :root {
+      font-variation-settings: "opsz" 25;
+    }
+    body {
+      font-family: InterVariable, Inter, sans-serif;
+    }
+
+storage:  # configure persistant history storage
+  type: sqlite
+  caching: true
+  path: /status_history/history.db  # keep as is!!
+
+# sorry 41666 tess told me to nick it
+_variables:
+  - &interval 15s
+  - &http_condition
+    - "[STATUS] == 200"
+    - "[CERTIFICATE_EXPIRATION] > 48h"
+  - &tls_condition
+    - "[CONNECTED] == true"
+    - "[CERTIFICATE_EXPIRATION] > 48h"
+  - &ping_condition
+    - "[CONNECTED] == true"
+  - &hide_url
+    - "hide-url: true"
+    - "hide-hostname: true"
+
+endpoints:
+  #
+  # pub
+  #
+  - name: fedi
+    url: https://f.mae.wtf
+    interval: *interval
+    conditions: *http_condition
+    group: "services"
+    alerts:
+      - type: discord
+
+  - name: pds
+    url: https://pds.mae.wtf
+    interval: *interval
+    conditions: *http_condition
+    group: "services"
+    alerts:
+      - type: discord
+
+  - name: forgejo
+    url: https://git.mae.wtf
+    interval: *interval
+    conditions: *http_condition
+    group: "services"
+    alerts:
+      - type: discord
+
+  - name: periwinkle
+    url: https://pwkl.maecafe.link:8889
+    ui:
+      hide-port: true
+    interval: *interval
+    conditions: *http_condition
+    group: "services"
+    alerts:
+      - type: discord
+
+  - name: mail
+    url: "starttls://mail.mae.wtf:587"
+    interval: *interval
+    client:
+      timeout: 5s
+    conditions: *tls_condition
+
+  - name: plausible
+    url: https://metrics.mae.wtf
+    interval: *interval
+    conditions: *http_condition
+    group: "services"  # Optional group
+    alerts:
+      - type: discord
+
+  #
+  # game servers
+  #
+  - name: mage
+    url: https://mage.maecafe.link/
+    interval: *interval
+    conditions: *http_condition
+    group: "services (gameserver)"
+    alerts:
+      - type: discord
+
+  - name: gsnode-eu-01
+    url: https://gsnode-eu-01.maecafe.link/
+    interval: *interval
+    conditions:
+      - "[STATUS] == 401"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    group: "services (gameserver)"
+    alerts:
+      - type: discord
+
+  #
+  # internal
+  #
+
+  - name: maecafe
+    url: ${URL_CAFE}
+    ui: *hide_url
+    interval: *interval
+    conditions: *http_condition
+    group: "internal"
+    alerts:
+      - type: discord
+
+  - name: immich
+    url: ${URL_IMMICH}
+    ui: *hide_url
+    interval: *interval
+    conditions: *http_condition
+    group: "internal"
+    alerts:
+      - type: discord
+
+  - name: kei
+    url: ${URL_KEI}
+    ui: *hide_url
+    interval: *interval
+    conditions: *http_condition
+    group: "internal"
+    alerts:
+      - type: discord
+
+  - name: jellyfin
+    url: ${URL_JELLYFIN}
+    ui: *hide_url
+    interval: *interval
+    conditions: *http_condition
+    group: "internal"
+    alerts:
+      - type: discord
+
+  - name: jellyseer
+    url: ${URL_JELLYSEER}
+    ui: *hide_url
+    interval: *interval
+    conditions: *http_condition
+    group: "internal"
+    alerts:
+      - type: discord
+
+  - name: radarr
+    url: ${URL_RDR}
+    ui: *hide_url
+    interval: *interval
+    conditions: *http_condition
+    group: "internal"
+    alerts:
+      - type: discord
+
+  - name: sonarr
+    url: ${URL_SNR}
+    ui: *hide_url
+    interval: *interval
+    conditions: *http_condition
+    group: "internal"
+    alerts:
+      - type: discord
+
+  - name: qbt
+    url: ${URL_QBT}
+    ui: *hide_url
+    interval: *interval
+    conditions: *http_condition
+    group: "internal"
+    alerts:
+      - type: discord
+
+  #
+  # computer
+  #
+  - name: aurora.on.maecafe.link
+    url: icmp://aurora.on.maecafe.link
+    interval: *interval
+    conditions: *ping_condition
+    group: "infra"
+    alerts:
+      - type: discord
+
+  - name: galaxy.on.maecafe.link
+    url: icmp://galaxy.on.maecafe.link
+    interval: *interval
+    conditions: *ping_condition
+    group: "infra"
+    alerts:
+      - type: discord
