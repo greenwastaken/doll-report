@@ -80,7 +80,9 @@ endpoints:
     ui:
       hide-port: true
     interval: *interval
-    conditions: *http_condition
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
     alerts:
       - type: discord
