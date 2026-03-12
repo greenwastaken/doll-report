@@ -82,7 +82,6 @@ endpoints:
     interval: *interval
     conditions:
       - "[CONNECTED] == true"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
     group: "services"
     alerts:
       - type: discord
