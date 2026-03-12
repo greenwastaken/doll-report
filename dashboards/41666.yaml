@@ -14,7 +14,7 @@ ui: # web-ui configuration, feel free to change it !!
       text-transform: lowercase;
       --background: 0 8% 8%;
       --foreground: 0 8% 78%;
-      --muted-foreground: 0 8% 78%;
+      --muted-foreground: 0 8% 78% / 45%;
       --card: 0 28% 10%;
       --radius: 0;
       --border: 0 0 0 / 0;
