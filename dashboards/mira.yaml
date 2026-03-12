@@ -1,0 +1,48 @@
+ui:
+  title: "mira status"
+  header: "mira.doll.report"
+  dashboard-subheading: "Status"
+  logo: "https://mira.quest/mira-bubble-large.png"
+  favicon:
+    default: "https://mira.quest/mira-bubble-large.png"
+    size16x16: "https://mira.quest/mira-bubble-large.png"
+    size32x32: "https://mira.quest/mira-bubble-large.png"
+
+storage:
+  type: sqlite
+  caching: true
+  path: /status_history/history.db
+
+endpoints:
+  - name: website
+    url: https://mira.quest
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+  - name: email
+    url: starttls://chpu.eu:587
+    interval: 1m
+    client:
+      timeout: 10s
+    conditions:
+      - "[CONNECTED] == true"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+  - name: sharkey
+    url: https://sk.fedi.gay
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+  - name: matrix
+    url: https://continuwuity.mira.quest
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+  - name: forgejo
+    url: https://git.mira.quest
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
