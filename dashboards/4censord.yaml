@@ -54,7 +54,7 @@ endpoints:
   - name: unfug.social - Instance
     url: https://unfug.social/health
     interval: *interval
-    conditions: *http_condition
+    conditions: *http_condition_100
     group: unfug-social
   - name: unfug.social - Media CDN
     url: https://media.unfug.social/public/site_uploads/files/000/000/001/@1x/9ef47b613f49f1ae.png
