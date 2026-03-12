@@ -5,7 +5,14 @@
     dest: /opt/gatus_config/{{ dashboard_name }}.yaml
     mode: "644"
 
-- name: Check if envfile exists
+- name: instance global env-file
+  ansible.builtin.copy:
+    remote_src: true
+    src: /opt/gatus_env/__doll_report_global.env
+    dest: /opt/gatus_env/{{ dashboard_name }}.env
+    mode: "644"
+
+- name: Check if dashboard-specific envfile exists
   ansible.builtin.stat:
     path: "dashboards/{{ dashboard_name }}.env.age"
   delegate_to: localhost
@@ -19,8 +26,8 @@
     mode: "644"
   when: envfile.stat.exists
 
-- name: Decrypt envfile
-  ansible.builtin.shell: /usr/bin/age --decrypt -i /opt/age_key /opt/gatus_env/{{ dashboard_name }}.env.age > /opt/gatus_env/{{ dashboard_name }}.env
+- name: Decrypt agefile and append to env
+  ansible.builtin.shell: /usr/bin/age --decrypt -i /opt/age_key /opt/gatus_env/{{ dashboard_name }}.env.age >> /opt/gatus_env/{{ dashboard_name }}.env
   when: envfile.stat.exists
 
 - name: Ensure dashboard gatus container
@@ -35,7 +42,7 @@
     volumes:
       - "/opt/gatus_config/{{ dashboard_name }}.yaml:/config/config.yaml"
       - "/opt/gatus_data/{{ dashboard_name }}/:/status_history/"
-    env_file: "{{ None if not envfile.stat.exists else '/opt/gatus_env/' + dashboard_name + '.env' }}"
+    env_file: "/opt/gatus_env/{{ dashboard_name }}.env"
 
 - name: Ensure dashboard nginx config
   ansible.builtin.template:
