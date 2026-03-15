@@ -92,9 +92,6 @@ There is a script to make this process easier in [`crypt/encrypt-envfile.sh`](cr
 >
 > i.e `dashboards/myname.env.age` for `dashboards/myname.yaml`
 
-More reading: https://github.com/TwiN/gatus?tab=readme-ov-file#alerting
-
-
 ### Example:
 Assuming dashboard configuration is at `dashboards/example.yaml`, create an envfile at the repository root as follows
 
@@ -135,4 +132,4 @@ alerting:
 Feel free to open issues on the repo if there are any bugs or questions!
 
 ---
-[![doll.report 88x31](https://doll.report/img/doll-report.gif)](https://doll.report) [![thermia 88x31](https://doll.report/img/thermia.gif)](https://girlthi.ng/~thermia)
+[<img src="https://doll.report/img/doll-report.gif" width=176 height=62 />](https://doll.report) [<img src="https://doll.report/img/thermia.gif" width=176 height=62 />](https://girlthi.ng/~thermia)
