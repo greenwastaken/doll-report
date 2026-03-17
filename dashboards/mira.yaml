@@ -20,6 +20,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
+    group: "Túrin"
   - name: email
     url: starttls://chpu.eu:587
     interval: 1m
@@ -28,21 +29,32 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
       - "[CERTIFICATE_EXPIRATION] > 48h"
+    group: "Húrin"
   - name: sharkey
     url: https://sk.fedi.gay
     interval: 1m
     conditions:
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
+    group: "Túrin"
   - name: matrix
     url: https://continuwuity.mira.quest
     interval: 1m
     conditions:
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
+    group: "Túrin"
   - name: forgejo
     url: https://git.mira.quest
     interval: 1m
     conditions:
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
+    group: "Túrin"
+  - name: home
+    url: https://miras.place
+    interval: 1m
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    group: "Celebrían"
