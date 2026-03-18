@@ -34,8 +34,6 @@ _variables:
     - "[STATUS] == 200"
     - "[CERTIFICATE_EXPIRATION] > 48h"
     - "[RESPONSE_TIME] < 1000"
-  - &alert
-    - type: telegram
 
 endpoints:
   #region "services"
@@ -61,7 +59,9 @@ endpoints:
     url: https://122.hu/
     interval: *interval
     conditions: *http_condition
-    alerts: *alert
+    alerts:
+      - type: telegram
+        description: "rhododendron https check"
     group: "services"
 
   - name: minecraft
@@ -77,7 +77,9 @@ endpoints:
     url: https://lotus.122.hu/
     interval: *interval
     conditions: *http_condition
-    alerts: *alert
+    alerts:
+      - type: telegram
+        description: "lotus https check"
     group: "infrastructure"
 
   - name: laptop
