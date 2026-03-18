@@ -19,14 +19,14 @@ storage:
   path: /status_history/history.db
 
 alerting:
-  email:
-    from: "monitoring@doll.report"
-    username: ${DOLL_REPORT_SMTP_USERNAME}
-    password: ${DOLL_REPORT_SMTP_PASSWORD}
-    host: ${DOLL_REPORT_SMTP_PASSWORD}
-    port: 587
-    to: ${GREEN_ALERTING_EMAIL}
-    failure-threshold: 10
+  telegram:
+    token: ${GREEN_TELEGRAM_TOKEN}
+    id: ${GREEN_TELEGRAM_CHAT}
+    default-alert:
+      description: "health check failed"
+      send-on-resolved: true
+      failure-threshold: 5
+      success-threshold: 5
 
 _variables:
   - &interval 60s
@@ -34,6 +34,8 @@ _variables:
     - "[STATUS] == 200"
     - "[CERTIFICATE_EXPIRATION] > 48h"
     - "[RESPONSE_TIME] < 1000"
+  - &alert
+    - type: telegram
 
 endpoints:
   #region "services"
@@ -59,6 +61,7 @@ endpoints:
     url: https://122.hu/
     interval: *interval
     conditions: *http_condition
+    alerts: *alert
     group: "services"
 
   - name: minecraft
@@ -74,6 +77,7 @@ endpoints:
     url: https://lotus.122.hu/
     interval: *interval
     conditions: *http_condition
+    alerts: *alert
     group: "infrastructure"
 
   - name: laptop
