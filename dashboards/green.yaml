@@ -24,8 +24,12 @@ _variables:
     - "[STATUS] == 200"
     - "[CERTIFICATE_EXPIRATION] > 48h"
     - "[RESPONSE_TIME] < 1000"
+  - &domain_check
+    - "[DOMAIN_EXPIRATION] > 720h"
+  - &interval_domaincheck 48h
 
 endpoints:
+  #region "services"
   - name: snac
     url: https://snac.122.hu/
     interval: *interval
@@ -50,7 +54,9 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
     group: "services"
+  #endregion "services"
 
+  #region "infrastructure"
   - name: lotus
     url: https://lotus.122.hu/
     interval: *interval
@@ -69,7 +75,9 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
     group: "infrastructure"
+  #endregion "infrastructure"
 
+  #region "cobble services"
   - name: cobblestonia
     url: tcp://cobble.cat:25565
     interval: *interval
@@ -118,3 +126,18 @@ endpoints:
     interval: *interval
     conditions: *http_condition
     group: "cobble services"
+  #endregion "cobble services"
+
+  #region "domains"
+  - name: 122.hu
+    url: icmp://122.hu
+    interval: *interval_domaincheck
+    conditions: *domain_check
+    group: domains
+
+  - name: cobble.cat
+    url: icmp://cobble.cat
+    interval: *interval_domaincheck
+    conditions: *domain_check
+    group: domains
+  #endregion "domains"
