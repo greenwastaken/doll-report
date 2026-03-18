@@ -34,13 +34,6 @@ _variables:
     - "[STATUS] == 200"
     - "[CERTIFICATE_EXPIRATION] > 48h"
     - "[RESPONSE_TIME] < 1000"
-  - &domain_check
-    - "[DOMAIN_EXPIRATION] > 720h"
-  - &alert_domain_expiration
-    - type: email
-      description: "Domain is about to expire"
-      failure-threshold: 1
-  - &interval_domaincheck 48h
 
 endpoints:
   #region "services"
@@ -167,19 +160,3 @@ endpoints:
     conditions: *http_condition
     group: "rhododendron proxies"
   #endregion "rhododendron proxies"
-
-  #region "domains"
-  - name: 122.hu
-    url: icmp://122.hu
-    interval: *interval_domaincheck
-    conditions: *domain_check
-    alerts: *alert_domain_expiration
-    group: domains
-
-  - name: cobble.cat
-    url: icmp://cobble.cat
-    interval: *interval_domaincheck
-    conditions: *domain_check
-    alerts: *alert_domain_expiration
-    group: domains
-  #endregion "domains"
