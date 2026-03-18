@@ -18,120 +18,103 @@ storage:
   caching: true
   path: /status_history/history.db
 
+_variables:
+  - &interval 60s
+  - &http_condition
+    - "[STATUS] == 200"
+    - "[CERTIFICATE_EXPIRATION] > 48h"
+    - "[RESPONSE_TIME] < 1000"
+
 endpoints:
   - name: snac
     url: https://snac.122.hu/
-    interval: 10s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "services"
 
   - name: vanilla snac
     url: https://vanilla-snac.122.hu/
-    interval: 10s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "services"
 
   - name: website
     url: https://122.hu/
-    interval: 10s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "services"
 
   - name: minecraft
     url: tcp://lotus.122.hu:25501
-    interval: 30s
+    interval: *interval
     conditions:
       - "[CONNECTED] == true"
     group: "services"
 
   - name: lotus
     url: https://lotus.122.hu/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "infrastructure"
 
   - name: laptop
     url: https://laptop.122.hu/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "infrastructure"
 
   - name: rhododendron
     url: ssh://rhododendron.122.hu:2298
-    interval: 30s
+    interval: *interval
     conditions:
       - "[CONNECTED] == true"
     group: "infrastructure"
 
   - name: cobblestonia
     url: tcp://cobble.cat:25565
-    interval: 30s
+    interval: *interval
     conditions:
       - "[CONNECTED] == true"
     group: "cobble services"
 
   - name: sillyposting.cobble.cat
     url: https://sillyposting.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: felis.cobble.cat
     url: https://felis.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: slsk.cobble.cat
     url: https://slsk.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: fedi.cobble.cat
     url: https://fedi.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: music.cobble.cat
     url: https://music.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: index.cobble.cat
     url: https://index.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: cobble.cat
     url: https://cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
