@@ -18,120 +18,168 @@ storage:
   caching: true
   path: /status_history/history.db
 
+alerting:
+  email:
+    from: "monitoring@doll.report"
+    username: ${DOLL_REPORT_SMTP_USERNAME}
+    password: ${DOLL_REPORT_SMTP_PASSWORD}
+    host: ${DOLL_REPORT_SMTP_PASSWORD}
+    port: 587
+    to: ${GREEN_ALERTING_EMAIL}
+    failure-threshold: 10
+
+_variables:
+  - &interval 60s
+  - &http_condition
+    - "[STATUS] == 200"
+    - "[CERTIFICATE_EXPIRATION] > 48h"
+    - "[RESPONSE_TIME] < 1000"
+  - &domain_check
+    - "[DOMAIN_EXPIRATION] > 720h"
+  - &alert_domain_expiration
+    - type: email
+      description: "Domain is about to expire"
+      failure-threshold: 1
+  - &interval_domaincheck 48h
+
 endpoints:
+  #region "services"
   - name: snac
     url: https://snac.122.hu/
-    interval: 10s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "services"
 
   - name: vanilla snac
     url: https://vanilla-snac.122.hu/
-    interval: 10s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
+    group: "services"
+
+  - name: laptop snac
+    url: https://snac.laptop.122.hu/
+    interval: *interval
+    conditions: *http_condition
     group: "services"
 
   - name: website
     url: https://122.hu/
-    interval: 10s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "services"
 
   - name: minecraft
     url: tcp://lotus.122.hu:25501
-    interval: 30s
+    interval: *interval
     conditions:
       - "[CONNECTED] == true"
     group: "services"
+  #endregion "services"
 
+  #region "infrastructure"
   - name: lotus
     url: https://lotus.122.hu/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "infrastructure"
 
   - name: laptop
     url: https://laptop.122.hu/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "infrastructure"
 
   - name: rhododendron
     url: ssh://rhododendron.122.hu:2298
-    interval: 30s
+    interval: *interval
     conditions:
       - "[CONNECTED] == true"
     group: "infrastructure"
+  #endregion "infrastructure"
 
+  #region "cobble services"
   - name: cobblestonia
     url: tcp://cobble.cat:25565
-    interval: 30s
+    interval: *interval
     conditions:
       - "[CONNECTED] == true"
     group: "cobble services"
 
   - name: sillyposting.cobble.cat
     url: https://sillyposting.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: felis.cobble.cat
     url: https://felis.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: slsk.cobble.cat
     url: https://slsk.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: fedi.cobble.cat
     url: https://fedi.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: music.cobble.cat
     url: https://music.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: index.cobble.cat
     url: https://index.cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
 
   - name: cobble.cat
     url: https://cobble.cat/
-    interval: 30s
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
+    interval: *interval
+    conditions: *http_condition
     group: "cobble services"
+  #endregion "cobble services"
+
+  #region "rhododendron proxies"
+  - name: rhododendron cobble
+    url: https://cobble.rhododendron.122.hu/
+    interval: *interval
+    conditions: *http_condition
+    group: "rhododendron proxies"
+
+  - name: rhododendron slsk
+    url: https://slsk.rhododendron.122.hu/
+    interval: *interval
+    conditions: *http_condition
+    group: "rhododendron proxies"
+
+  - name: rhododendron music
+    url: https://music.rhododendron.122.hu/
+    interval: *interval
+    conditions: *http_condition
+    group: "rhododendron proxies"
+  #endregion "rhododendron proxies"
+
+  #region "domains"
+  - name: 122.hu
+    url: icmp://122.hu
+    interval: *interval_domaincheck
+    conditions: *domain_check
+    alerts: *alert_domain_expiration
+    group: domains
+
+  - name: cobble.cat
+    url: icmp://cobble.cat
+    interval: *interval_domaincheck
+    conditions: *domain_check
+    alerts: *alert_domain_expiration
+    group: domains
+  #endregion "domains"
