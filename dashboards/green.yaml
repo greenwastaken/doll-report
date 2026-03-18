@@ -56,6 +56,12 @@ endpoints:
     conditions: *http_condition
     group: "services"
 
+  - name: laptop snac
+    url: https://snac.laptop.122.hu/
+    interval: *interval
+    conditions: *http_condition
+    group: "services"
+
   - name: website
     url: https://122.hu/
     interval: *interval
