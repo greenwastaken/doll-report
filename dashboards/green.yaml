@@ -18,6 +18,16 @@ storage:
   caching: true
   path: /status_history/history.db
 
+alerting:
+  email:
+    from: "monitoring@doll.report"
+    username: ${DOLL_REPORT_SMTP_USERNAME}
+    password: ${DOLL_REPORT_SMTP_PASSWORD}
+    host: ${DOLL_REPORT_SMTP_PASSWORD}
+    port: 587
+    to: ${GREEN_ALERTING_EMAIL}
+    failure-threshold: 10
+
 _variables:
   - &interval 60s
   - &http_condition
@@ -26,6 +36,10 @@ _variables:
     - "[RESPONSE_TIME] < 1000"
   - &domain_check
     - "[DOMAIN_EXPIRATION] > 720h"
+  - &alert_domain_expiration
+    - type: email
+      description: "Domain is about to expire"
+      failure-threshold: 1
   - &interval_domaincheck 48h
 
 endpoints:
@@ -133,11 +147,13 @@ endpoints:
     url: icmp://122.hu
     interval: *interval_domaincheck
     conditions: *domain_check
+    alerts: *alert_domain_expiration
     group: domains
 
   - name: cobble.cat
     url: icmp://cobble.cat
     interval: *interval_domaincheck
     conditions: *domain_check
+    alerts: *alert_domain_expiration
     group: domains
   #endregion "domains"
