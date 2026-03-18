@@ -142,6 +142,26 @@ endpoints:
     group: "cobble services"
   #endregion "cobble services"
 
+  #region "rhododendron proxies"
+  - name: rhododendron cobble
+    url: https://cobble.rhododendron.122.hu/
+    interval: *interval
+    conditions: *http_condition
+    group: "rhododendron proxies"
+
+  - name: rhododendron slsk
+    url: https://slsk.rhododendron.122.hu/
+    interval: *interval
+    conditions: *http_condition
+    group: "rhododendron proxies"
+
+  - name: rhododendron music
+    url: https://music.rhododendron.122.hu/
+    interval: *interval
+    conditions: *http_condition
+    group: "rhododendron proxies"
+  #endregion "rhododendron proxies"
+
   #region "domains"
   - name: 122.hu
     url: icmp://122.hu
