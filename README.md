@@ -39,7 +39,7 @@ your instance will be available at `https://<name of dashboard>.doll.report`.
 - Domain expiration probe intervals not allowed to be lower than 30 minutes between requests.
   (See more info here: https://github.com/TwiN/gatus?tab=readme-ov-file#monitoring-domain-expiration)
 
-## Globaly Provided Variables
+## Globally Provided Variables
 We ship a couple of default secret variables to all gatus instances. These are available no matter if user defined variables are present or not.
 
 ### smtp 
